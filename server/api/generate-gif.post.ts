@@ -45,10 +45,31 @@ export default defineEventHandler(async (event) => {
     const filename = `assinatura${safeName}.gif`
 
     // 4. Puppeteer & GIF Generation
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        headless: true
-    })
+    // 4. Puppeteer & GIF Generation
+
+    let browser;
+
+    if (process.env.VERCEL) {
+        // Production (Vercel)
+        const chromium = await import('@sparticuz/chromium').then(m => m.default)
+        const puppeteerCore = await import('puppeteer-core').then(m => m.default)
+
+        // Essential for Vercel/Lambda environment
+        chromium.setGraphicsMode = false
+
+        browser = await puppeteerCore.launch({
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
+        })
+    } else {
+        // Local Development
+        browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            headless: true
+        })
+    }
 
     const page = await browser.newPage()
 

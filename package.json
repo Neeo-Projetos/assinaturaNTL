@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "6.14.0",
+    "@sparticuz/chromium": "^143.0.4",
     "gifencoder": "^2.0.1",
     "nuxt": "^4.3.1",
     "pngjs": "^7.0.0",
     "puppeteer": "^24.37.3",
+    "puppeteer-core": "^24.37.3",
     "vue": "^3.5.28",
     "vue-router": "^4.6.4"
   },
