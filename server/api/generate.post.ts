@@ -36,12 +36,11 @@ export default defineEventHandler(async (event) => {
   // Remove spaces and special chars for filename
   const safeName = name.replace(/[^a-zA-Z0-9]/g, '')
   const filename = `assinatura${safeName}.html`
-  const outputPath = join(process.cwd(), 'public', 'assinaturas', filename)
 
-  await fs.writeFile(outputPath, template)
-
+  // Return HTML content directly (Stateless)
   return {
     success: true,
-    url: `/assinaturas/${filename}`
+    html: template,
+    filename: filename
   }
 })

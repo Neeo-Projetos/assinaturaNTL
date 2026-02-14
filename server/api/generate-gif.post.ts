@@ -37,18 +37,9 @@ export default defineEventHandler(async (event) => {
         template = template.replace('<body class="', '<body class="dark ')
     }
 
-    // 3. Setup Output
+    // 3. Setup Filename (for metadata if needed)
     const safeName = name.replace(/[^a-zA-Z0-9]/g, '')
     const filename = `assinatura${safeName}.gif`
-    const publicDir = join(process.cwd(), 'public', 'assinaturas')
-    const outputPath = join(publicDir, filename)
-
-    // Ensure directory exists
-    try {
-        await fs.access(publicDir)
-    } catch {
-        await fs.mkdir(publicDir, { recursive: true })
-    }
 
     // 4. Puppeteer & GIF Generation
     const browser = await puppeteer.launch({
@@ -75,9 +66,10 @@ export default defineEventHandler(async (event) => {
 
     const encoder = new GIFEncoder(width, height)
 
-    // We need the standard fs for createWriteStream
-    const { createWriteStream } = await import('fs')
-    encoder.createReadStream().pipe(createWriteStream(outputPath))
+    // Collect chunks into a buffer instead of writing to file
+    const chunks: any[] = []
+    const stream = encoder.createReadStream()
+    stream.on('data', (chunk) => chunks.push(chunk))
 
     encoder.start()
     encoder.setRepeat(0)   // 0 for repeat, -1 for no-repeat
@@ -121,8 +113,14 @@ export default defineEventHandler(async (event) => {
     encoder.finish()
     await browser.close()
 
+    // Convert chunks to buffer then to base64
+    const buffer = Buffer.concat(chunks)
+    const base64 = buffer.toString('base64')
+    const dataUri = `data:image/gif;base64,${base64}`
+
     return {
         success: true,
-        url: `/assinaturas/${filename}`
+        dataUri: dataUri,
+        filename: filename
     }
 })
