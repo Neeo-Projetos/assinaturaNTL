@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Nuxt
+.nuxt/
+.output/
+dist/
+
+# Generated signatures
+dashboard/public/assinaturas/
+
+# Environment
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
