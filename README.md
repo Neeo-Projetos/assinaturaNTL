@@ -1,75 +1,77 @@
-# Nuxt Minimal Starter
+# ✒️ Gerador de Assinaturas NTL
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+> **Crie assinaturas de e-mail profissionais em segundos.**
 
-## Setup
+![Project Banner](https://via.placeholder.com/1200x400?text=Gerador+de+Assinaturas+NTL) <!-- Substituir por um banner real se disponível -->
 
-Make sure to install dependencies:
+Bem-vindo ao **Gerador de Assinaturas NTL**, uma aplicação moderna e intuitiva desenvolvida para padronizar e facilitar a criação de assinaturas de e-mail para a equipe NTL.
+
+## ✨ Funcionalidades
+
+- **🎨 Design Profissional**: Gera assinaturas com layout limpo e moderno.
+- **🌗 Modo Escuro/Claro**: Interface adaptável para melhor experiência de uso.
+- **⚡ Preenchimento Fácil**: Campos para Nome, Cargo, E-mail e Telefone.
+- **👀 Visualização em Tempo Real**: Veja como sua assinatura ficará enquanto digita.
+- **📥 Exportação HTML**: Gera o código HTML pronto para copiar e colar no seu cliente de e-mail.
+- **GIF Animado (Beta)**: Suporte para geração de assinaturas animadas (GIF).
+
+## 🛠️ Tecnologias Utilizadas
+
+Este projeto foi construído com as melhores tecnologias do ecossistema Vue/Nuxt:
+
+- [Nuxt 3](https://nuxt.com/) - O Framework Vue híbrido.
+- [Vue 3](https://vuejs.org/) - O Framework progressivo de JavaScript.
+- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitário para estilização rápida.
+- [Puppeteer](https://pptr.dev/) - Para geração de imagens e GIFs no servidor.
+
+## 🚀 Como Executar
+
+Siga os passos abaixo para rodar o projeto localmente:
+
+### Pré-requisitos
+
+- Node.js (v18+ recomendado)
+- pnpm (ou npm/yarn)
+
+### Instalação
+
+Clones o repositório e instale as dependências:
 
 ```bash
-# npm
-npm install
-
-# pnpm
+git clone https://github.com/tiagomdss/assinaturaNTL.git
+cd assinaturaNTL/dashboard
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+### Desenvolvimento
 
-Start the development server on `http://localhost:3000`:
+Inicie o servidor de desenvolvimento:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Acesse `http://localhost:3000` no seu navegador.
 
-Build the application for production:
+### Build para Produção
+
+Para gerar a versão de produção:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
 pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+## 📂 Estrutura do Projeto
 
-```bash
-# npm
-npm run preview
+- `app/`: Contém a lógica principal da aplicação (Vue/Nuxt).
+- `server/`: APIs server-side (geração de GIF/HTML).
+- `public/`: Arquivos estáticos.
+- `template.html`: Template base para a assinatura.
 
-# pnpm
-pnpm preview
+## 🤝 Contribuição
 
-# yarn
-yarn preview
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
 
-# bun
-bun run preview
-```
+---
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Feito com 💜 pela equipe NTL.
