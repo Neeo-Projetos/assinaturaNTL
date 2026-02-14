@@ -1,6 +1,4 @@
 import { defineEventHandler, getQuery, createError } from 'h3'
-import { promises as fs } from 'fs'
-import { join } from 'path'
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event)
@@ -13,9 +11,16 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // Read template
-    const templatePath = join(process.cwd(), 'template.html')
-    let template = await fs.readFile(templatePath, 'utf-8')
+    // Read template from server assets
+    const storage = useStorage('assets:server')
+    let template = await storage.getItem('template.html') as string
+
+    if (!template) {
+        throw createError({
+            statusCode: 500,
+            statusMessage: 'Template not found'
+        })
+    }
 
     // Replace placeholders
     // Using explicit string replacement to avoid regex issues with special chars in user input if not careful

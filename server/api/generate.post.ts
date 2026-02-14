@@ -1,6 +1,4 @@
-import { defineEventHandler, readBody } from 'h3'
-import { promises as fs } from 'fs'
-import { join } from 'path'
+import { defineEventHandler, readBody, createError } from 'h3'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -13,9 +11,17 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Read template (adjust path as needed, assuming it's in root of project)
-  const templatePath = join(process.cwd(), 'template.html')
-  let template = await fs.readFile(templatePath, 'utf-8')
+  // Read template from server assets
+  // This works in production/serverless where file system access is restricted
+  const storage = useStorage('assets:server')
+  let template = await storage.getItem('template.html') as string
+
+  if (!template) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Template not found'
+    })
+  }
 
   // Replace placeholders
   // We use regex to ensure we replace existing values from the specific template provided

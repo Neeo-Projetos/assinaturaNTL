@@ -1,6 +1,4 @@
 import { defineEventHandler, readBody, createError } from 'h3'
-import fs from 'fs/promises'
-import { join } from 'path'
 import puppeteer from 'puppeteer'
 import GIFEncoder from 'gifencoder'
 import { PNG } from 'pngjs'
@@ -16,9 +14,16 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // 1. Read Template
-    const templatePath = join(process.cwd(), 'template.html')
-    let template = await fs.readFile(templatePath, 'utf-8')
+    // 1. Read Template from server assets
+    const storage = useStorage('assets:server')
+    let template = await storage.getItem('template.html') as string
+
+    if (!template) {
+        throw createError({
+            statusCode: 500,
+            statusMessage: 'Template not found'
+        })
+    }
 
     // 2. Replace Placeholders
     template = template.replace(/Joao Silva/g, name)
