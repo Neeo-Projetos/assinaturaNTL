@@ -120,48 +120,47 @@
           </div>
 
           <!-- Permanent Link Section -->
-          <div v-if="permanentLink" class="p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
-             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Link Permanente (Para usar em produção)</label>
-             <div class="flex items-center gap-2">
-                <input 
-                  readonly 
-                  :value="permanentLink" 
-                  class="flex-1 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 text-xs p-2 rounded border border-gray-300 dark:border-gray-700 focus:outline-none"
-                  @click="($event.target as HTMLInputElement).select()"
-                />
-                <button 
-                  @click="copyLink"
-                  class="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
-                  title="Copiar Link"
-                >
-                  <svg v-if="!copied" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div v-if="permanentLink" class="p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl space-y-3">
+             
+             <!-- Copy HTML Button -->
+             <button 
+                @click="copyHtml"
+                class="w-full py-2 px-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium rounded-lg shadow hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+             >
+                <svg v-if="!copiedHtml" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </button>
+                </svg>
+                {{ copiedHtml ? 'Código HTML Copiado!' : 'Copiar Código HTML' }}
+             </button>
+
+             <div>
+                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Link Permanente (Dados na URL)</label>
+                <div class="flex items-center gap-2">
+                    <input 
+                    readonly 
+                    :value="permanentLink" 
+                    class="flex-1 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 text-xs p-2 rounded border border-gray-300 dark:border-gray-700 focus:outline-none"
+                    @click="($event.target as HTMLInputElement).select()"
+                    />
+                    <button 
+                    @click="copyLink"
+                    class="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
+                    title="Copiar Link"
+                    >
+                    <svg v-if="!copied" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    </button>
+                </div>
              </div>
           </div>
 
-        </div>
-
-        <!-- Success Message GIF -->
-        <div v-if="gifUrl" class="mt-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-500/30 rounded-xl flex flex-col items-start gap-3 animate-fade-in">
-          <div class="flex items-center gap-3">
-             <div class="flex-shrink-0 mt-0.5">
-                <svg class="h-5 w-5 text-purple-600 dark:text-purple-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <h3 class="text-sm font-semibold text-purple-800 dark:text-purple-400">GIF gerado com sucesso!</h3>
-          </div>
-          
-          <img :src="gifUrl" class="w-full rounded-lg border border-purple-200 dark:border-purple-500/20 shadow-sm" alt="Generated GIF Signature" />
-
-          <a :href="gifUrl" download class="mt-1 block text-sm text-purple-700 dark:text-purple-300 underline hover:text-purple-600 dark:hover:text-purple-200 w-full text-center">
-            Baixar GIF
-          </a>
         </div>
 
         <!-- Error Message -->
@@ -186,20 +185,6 @@
 
       </div>
 
-      <!-- Theme Toggle Button -->
-      <button 
-        @click="toggleTheme" 
-        class="fixed top-6 right-6 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        aria-label="Toggle Theme"
-      >
-        <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-      </button>
-
     </div>
   </div>
 </template>
@@ -215,13 +200,13 @@ const form = ref({
 })
 
 const loading = ref(false)
-const generatingGif = ref(false)
 const successUrl = ref('')
+const generatedHtml = ref('')
 const permanentLink = ref('')
-const gifUrl = ref('')
 const error = ref('')
-const isDark = ref(true) // Default to dark mode
+const isDark = ref(false) // Always light
 const copied = ref(false)
+const copiedHtml = ref(false)
 
 const copyLink = () => {
   navigator.clipboard.writeText(permanentLink.value)
@@ -230,25 +215,16 @@ const copyLink = () => {
 }
 
 onMounted(() => {
-    // Check system preference or saved preference
-    if (localStorage.getItem('theme') === 'light') {
-        isDark.value = false;
-    } else {
-        isDark.value = true;
-    }
+    // Force light mode
+    isDark.value = false;
 })
-
-const toggleTheme = () => {
-    isDark.value = !isDark.value;
-    localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
-}
 
 const generateSignature = async () => {
   // Clear previous results immediately for better feedback
   successUrl.value = ''
   permanentLink.value = ''
-  gifUrl.value = ''
   error.value = ''
+  generatedHtml.value = ''
   
   loading.value = true
 
@@ -256,10 +232,14 @@ const generateSignature = async () => {
   // This helps when the API is too fast
   const minLoadTime = new Promise(resolve => setTimeout(resolve, 800))
   
+  // Force Theme Light
+  // The user requested to always use light mode
+  // We don't send theme param or send 'light'
+  
   try {
     const request = $fetch('/api/generate', {
       method: 'POST',
-      body: form.value
+      body: { ...form.value, theme: 'light' }
     })
 
     const [_, data] = await Promise.all([minLoadTime, request])
@@ -269,6 +249,7 @@ const generateSignature = async () => {
       const blob = new Blob([data.html], { type: 'text/html' })
       const url = URL.createObjectURL(blob)
       successUrl.value = url
+      generatedHtml.value = data.html
 
       // Generate Permanent Link
       const baseUrl = window.location.origin
@@ -277,7 +258,7 @@ const generateSignature = async () => {
         role: form.value.role,
         email: form.value.email,
         phone: form.value.phone,
-        theme: isDark.value ? 'dark' : 'light'
+        theme: 'light'
       })
       permanentLink.value = `${baseUrl}/assinatura?${params.toString()}`
 
@@ -291,29 +272,10 @@ const generateSignature = async () => {
   }
 }
 
-const generateGif = async () => {
-  // Clear previous results immediately
-  generatingGif.value = true
-  successUrl.value = ''
-  gifUrl.value = ''
-  error.value = ''
-
-  try {
-    const data = await $fetch('/api/generate-gif', {
-      method: 'POST',
-      body: { ...form.value, theme: isDark.value ? 'dark' : 'light' }
-    })
-
-    if (data && data.success) {
-      gifUrl.value = data.dataUri
-    } else {
-        error.value = 'Houve um erro desconhecido.'
-    }
-  } catch (e: any) {
-    error.value = e.message || 'Erro ao comunicar com o servidor.'
-  } finally {
-    generatingGif.value = false
-  }
+const copyHtml = () => {
+  navigator.clipboard.writeText(generatedHtml.value)
+  copiedHtml.value = true
+  setTimeout(() => copiedHtml.value = false, 2000)
 }
 
 

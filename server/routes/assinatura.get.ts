@@ -37,13 +37,8 @@ export default defineEventHandler(async (event) => {
         template = template.replace('<!-- PHONE_PLACEHOLDER -->', '')
     }
 
-    // Force Theme
-    if (theme === 'dark') {
-        // If template has body class="...", append dark. 
-        // Assuming template starts with specific body tag or customizable.
-        // Based on previous code:
-        template = template.replace('<body class="', '<body class="dark ')
-    }
+    // Force Theme Light (Default in template is light, so we just don't add dark class)
+    // if (theme === 'dark') { ... } -> Removed
 
     // Set headers to serve as HTML
     setHeader(event, 'Content-Type', 'text/html')
