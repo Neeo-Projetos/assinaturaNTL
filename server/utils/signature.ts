@@ -4,18 +4,24 @@ import { getRequestURL } from 'h3'
 export interface SignaturePayload {
   name?: string | null
   role?: string | null
+  department?: string | null
   email?: string | null
   phone?: string | null
   phone1?: string | null
   phone2?: string | null
+  phone3?: string | null
+  whatsapp?: string | null
 }
 
 export interface NormalizedSignature {
   name: string
   role: string
+  department: string
   email: string
   phone1: string
   phone2: string
+  phone3: string
+  whatsapp: string
 }
 
 const trimValue = (value: unknown) => (typeof value === 'string' ? value.trim() : '')
@@ -44,6 +50,11 @@ const sanitizePhoneHref = (value: string) => {
     : trimmed.replace(/\D/g, '')
 }
 
+const sanitizeWhatsAppHref = (value: string) => value.replace(/\D/g, '')
+
+const renderLinkedText = (visibleText: string, href: string, color: string) =>
+  `<a href="${href}" style="color:${color};text-decoration:none;border:0;outline:none;">${visibleText}</a>`
+
 const renderPhoneLine = (phone: string) => {
   const visibleText = escapeHtml(phone)
   const href = sanitizePhoneHref(phone)
@@ -52,21 +63,46 @@ const renderPhoneLine = (phone: string) => {
     return visibleText
   }
 
-  return `<a href="tel:${escapeAttribute(href)}" style="color:#1f2937;text-decoration:none;border:0;outline:none;">${visibleText}</a>`
+  return renderLinkedText(visibleText, `tel:${escapeAttribute(href)}`, '#1f2937')
+}
+
+const renderWhatsappLine = (whatsapp: string) => {
+  const visibleText = `WhatsApp: ${escapeHtml(whatsapp)}`
+  const href = sanitizeWhatsAppHref(whatsapp)
+
+  if (!href) {
+    return visibleText
+  }
+
+  return renderLinkedText(visibleText, `https://wa.me/${href}`, '#14804a')
 }
 
 const renderEmailLine = (email: string) =>
-  `<a href="mailto:${escapeAttribute(email)}" style="color:#0f4c81;text-decoration:none;border:0;outline:none;">${escapeHtml(email)}</a>`
+  renderLinkedText(escapeHtml(email), `mailto:${escapeAttribute(email)}`, '#0f4c81')
 
-const renderLegacyContactLine = (value: string) => {
-  const label = escapeHtml(value)
-  const href = sanitizePhoneHref(value)
+const renderLegacyContactLine = (html: string) => `<div class="contact-line">${html}</div>`
 
-  if (!href) {
-    return `<div class="contact-line">${label}</div>`
+const renderRoleBlock = (role: string, department: string) => {
+  const safeRole = escapeHtml(role)
+  const safeDepartment = escapeHtml(department)
+
+  if (!safeDepartment) {
+    return `<div style="margin:0 0 14px 0;font-size:15px;line-height:1.5;color:#667085;">${safeRole}</div>`
   }
 
-  return `<div class="contact-line"><a href="tel:${escapeAttribute(href)}">${label}</a></div>`
+  return `<div style="margin:0 0 6px 0;font-size:15px;line-height:1.5;color:#667085;">${safeRole}</div><div style="margin:0 0 14px 0;font-size:14px;line-height:1.5;color:#8a93a1;">${safeDepartment}</div>`
+}
+
+const buildContactLines = (signature: NormalizedSignature) => {
+  const contactLines = [signature.phone1, signature.phone2, signature.phone3].filter(Boolean).map(renderPhoneLine)
+
+  if (signature.whatsapp) {
+    contactLines.push(renderWhatsappLine(signature.whatsapp))
+  }
+
+  contactLines.push(renderEmailLine(signature.email))
+
+  return contactLines
 }
 
 export function normalizeSignaturePayload(payload: SignaturePayload): NormalizedSignature {
@@ -76,9 +112,12 @@ export function normalizeSignaturePayload(payload: SignaturePayload): Normalized
   return {
     name: trimValue(payload.name),
     role: trimValue(payload.role),
+    department: trimValue(payload.department),
     email: trimValue(payload.email),
     phone1,
-    phone2: trimValue(payload.phone2)
+    phone2: trimValue(payload.phone2),
+    phone3: trimValue(payload.phone3),
+    whatsapp: trimValue(payload.whatsapp)
   }
 }
 
@@ -107,12 +146,11 @@ export function buildSignatureFilename(name: string) {
 }
 
 export function renderSignatureHtml(template: string, signature: NormalizedSignature, brandGifUrl: string) {
-  const contactLines = [signature.phone1, signature.phone2].filter(Boolean).map(renderPhoneLine)
-  const contactBlock = [...contactLines, renderEmailLine(signature.email)].join('<br />')
+  const contactBlock = buildContactLines(signature).join('<br />')
 
   const replacements: Array<[string, string]> = [
     ['{{NAME}}', escapeHtml(signature.name)],
-    ['{{ROLE}}', escapeHtml(signature.role)],
+    ['{{ROLE_BLOCK}}', renderRoleBlock(signature.role, signature.department)],
     ['{{CONTACT_BLOCK}}', contactBlock],
     ['{{GIF_URL}}', escapeAttribute(brandGifUrl)]
   ]
@@ -121,10 +159,10 @@ export function renderSignatureHtml(template: string, signature: NormalizedSigna
 }
 
 export function renderLegacySignatureGifDocument(signature: NormalizedSignature) {
-  const phoneLines = [signature.phone1, signature.phone2]
-    .filter(Boolean)
-    .map(renderLegacyContactLine)
-    .join('')
+  const contactLines = buildContactLines(signature).map(renderLegacyContactLine).join('')
+  const departmentLine = signature.department
+    ? `<div class="department">${escapeHtml(signature.department)}</div>`
+    : ''
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -169,10 +207,17 @@ export function renderLegacySignatureGifDocument(signature: NormalizedSignature)
       }
 
       .role {
-        margin: 0 0 12px;
+        margin: 0 0 6px;
         font-size: 15px;
         line-height: 1.5;
         color: #5b6472;
+      }
+
+      .department {
+        margin: 0 0 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #8a93a1;
       }
 
       .contact-line {
@@ -183,7 +228,6 @@ export function renderLegacySignatureGifDocument(signature: NormalizedSignature)
       }
 
       .contact-line a {
-        color: #1f2937;
         text-decoration: none;
       }
 
@@ -259,8 +303,8 @@ export function renderLegacySignatureGifDocument(signature: NormalizedSignature)
       <div class="text-panel">
         <h1 class="name">${escapeHtml(signature.name)}</h1>
         <p class="role">${escapeHtml(signature.role)}</p>
-        ${phoneLines}
-        <div class="contact-line"><a href="mailto:${escapeAttribute(signature.email)}">${escapeHtml(signature.email)}</a></div>
+        ${departmentLine}
+        ${contactLines}
       </div>
       <div class="divider"></div>
       <div class="brand-panel">

@@ -40,6 +40,17 @@
               </div>
 
               <div class="space-y-2">
+                <label for="department" class="block text-sm font-medium text-slate-700">Departamento (Opcional)</label>
+                <input
+                  id="department"
+                  v-model="form.department"
+                  type="text"
+                  placeholder="Ex: Operacoes"
+                  class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                />
+              </div>
+
+              <div class="space-y-2">
                 <label for="email" class="block text-sm font-medium text-slate-700">E-mail</label>
                 <input
                   id="email"
@@ -53,7 +64,7 @@
 
               <div class="grid gap-5 md:grid-cols-2">
                 <div class="space-y-2">
-                  <label for="phone1" class="block text-sm font-medium text-slate-700">Telefone 1</label>
+                  <label for="phone1" class="block text-sm font-medium text-slate-700">Telefone 1 (Opcional)</label>
                   <input
                     id="phone1"
                     v-model="form.phone1"
@@ -64,12 +75,34 @@
                 </div>
 
                 <div class="space-y-2">
-                  <label for="phone2" class="block text-sm font-medium text-slate-700">Telefone 2</label>
+                  <label for="phone2" class="block text-sm font-medium text-slate-700">Telefone 2 (Opcional)</label>
                   <input
                     id="phone2"
                     v-model="form.phone2"
                     type="tel"
                     placeholder="(11) 3333-4444"
+                    class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                  />
+                </div>
+
+                <div class="space-y-2">
+                  <label for="phone3" class="block text-sm font-medium text-slate-700">Telefone 3 (Opcional)</label>
+                  <input
+                    id="phone3"
+                    v-model="form.phone3"
+                    type="tel"
+                    placeholder="(11) 4000-5000"
+                    class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                  />
+                </div>
+
+                <div class="space-y-2">
+                  <label for="whatsapp" class="block text-sm font-medium text-slate-700">WhatsApp (Opcional)</label>
+                  <input
+                    id="whatsapp"
+                    v-model="form.whatsapp"
+                    type="tel"
+                    placeholder="+55 11 99999-9999"
                     class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
                   />
                 </div>
@@ -152,9 +185,14 @@
               <div class="mt-2 text-[15px] leading-6 text-slate-500">
                 {{ previewSignature.role }}
               </div>
+              <div v-if="previewSignature.department" class="text-[14px] leading-6 text-slate-400">
+                {{ previewSignature.department }}
+              </div>
               <div class="mt-4 space-y-1 text-[14px] leading-[22px] text-slate-800">
                 <div v-if="previewSignature.phone1">{{ previewSignature.phone1 }}</div>
                 <div v-if="previewSignature.phone2">{{ previewSignature.phone2 }}</div>
+                <div v-if="previewSignature.phone3">{{ previewSignature.phone3 }}</div>
+                <div v-if="previewSignature.whatsapp" class="text-[#14804a]">WhatsApp: {{ previewSignature.whatsapp }}</div>
                 <div class="text-[#0f4c81]">{{ previewSignature.email }}</div>
               </div>
             </div>
@@ -179,9 +217,12 @@ import { computed, ref } from 'vue'
 interface SignatureForm {
   name: string
   role: string
+  department: string
   email: string
   phone1: string
   phone2: string
+  phone3: string
+  whatsapp: string
 }
 
 interface SignatureResponse {
@@ -194,9 +235,12 @@ interface SignatureResponse {
 const form = ref<SignatureForm>({
   name: '',
   role: '',
+  department: '',
   email: '',
   phone1: '',
-  phone2: ''
+  phone2: '',
+  phone3: '',
+  whatsapp: ''
 })
 
 const loading = ref(false)
@@ -209,9 +253,12 @@ const lastGeneratedSnapshot = ref('')
 const normalizeForm = (value: SignatureForm) => ({
   name: value.name.trim(),
   role: value.role.trim(),
+  department: value.department.trim(),
   email: value.email.trim(),
   phone1: value.phone1.trim(),
-  phone2: value.phone2.trim()
+  phone2: value.phone2.trim(),
+  phone3: value.phone3.trim(),
+  whatsapp: value.whatsapp.trim()
 })
 
 const serializePayload = (value: ReturnType<typeof normalizeForm>) => JSON.stringify(value)
@@ -221,9 +268,12 @@ const currentPayload = computed(() => normalizeForm(form.value))
 const previewSignature = computed(() => ({
   name: currentPayload.value.name || 'Joao Silva',
   role: currentPayload.value.role || 'Analista',
+  department: currentPayload.value.department,
   email: currentPayload.value.email || 'joao@ntl.com.br',
   phone1: currentPayload.value.phone1,
-  phone2: currentPayload.value.phone2
+  phone2: currentPayload.value.phone2,
+  phone3: currentPayload.value.phone3,
+  whatsapp: currentPayload.value.whatsapp
 }))
 
 const isOutdated = computed(
@@ -301,12 +351,3 @@ const copyHtml = async () => {
   }
 }
 </script>
-
-
-
-
-
-
-
-
-
