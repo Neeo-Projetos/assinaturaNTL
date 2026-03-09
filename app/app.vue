@@ -1,287 +1,312 @@
 <template>
-  <div :class="{ 'dark': isDark }">
-    <div class="relative min-h-screen flex items-center justify-center p-4 transition-colors duration-300 bg-gray-50 dark:bg-[#0f1016] text-gray-900 dark:text-white overflow-hidden font-sans">
-      
-      <!-- Particles Background Removed due to incompatibility -->
-
-
-      <!-- Main Card -->
-      <div class="w-full max-w-lg bg-white dark:bg-[#1a1b26] border border-gray-200 dark:border-gray-800 rounded-3xl shadow-2xl p-8 relative z-10 transition-colors duration-300">
-        
-        <!-- Header -->
-        <div class="text-center mb-8">
-          <h1 class="text-3xl md:text-4xl font-bold mb-2 tracking-tight">
-            Gerador de Assinaturas <span class="text-indigo-600 dark:text-indigo-500">NTL</span>
-          </h1>
-          <p class="text-gray-500 dark:text-gray-400 text-sm">Crie sua assinatura profissional em segundos</p>
-        </div>
-
-        <!-- Form -->
-        <form @submit.prevent="generateSignature" class="space-y-5">
-          
-          <div class="space-y-1">
-            <label for="name" class="block text-sm font-medium text-gray-400">Nome Completo</label>
-            <input
-              v-model="form.name"
-              id="name"
-              type="text"
-              required
-              placeholder="Ex: João Silva"
-              class="block w-full px-4 py-3 bg-gray-50 dark:bg-white text-gray-900 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 placeholder-gray-400 transition-shadow"
-            />
-          </div>
-
-          <div class="space-y-1">
-            <label for="role" class="block text-sm font-medium text-gray-400">Cargo</label>
-            <input
-              v-model="form.role"
-              id="role"
-              type="text"
-              required
-              placeholder="Ex: Desenvolvedor Senior"
-              class="block w-full px-4 py-3 bg-gray-50 dark:bg-white text-gray-900 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 placeholder-gray-400 transition-shadow"
-            />
-          </div>
-
-          <div class="space-y-1">
-            <label for="email" class="block text-sm font-medium text-gray-400">Email</label>
-            <input
-              v-model="form.email"
-              id="email"
-              type="email"
-              required
-              placeholder="email@exemplo.com"
-              class="block w-full px-4 py-3 bg-gray-50 dark:bg-white text-gray-900 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 placeholder-gray-400 transition-shadow"
-            />
-          </div>
-
-          <div class="space-y-1">
-            <label for="phone" class="block text-sm font-medium text-gray-400">Telefone (Opcional)</label>
-            <input
-              v-model="form.phone"
-              id="phone"
-              type="tel"
-              placeholder="(11) 99999-9999"
-              class="block w-full px-4 py-3 bg-gray-50 dark:bg-white text-gray-900 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 placeholder-gray-400 transition-shadow"
-            />
-          </div>
-
-          <!-- Buttons -->
-          <div>
-            <button 
-                type="submit"
-                :disabled="loading"
-                class="w-full py-4 mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 group relative overflow-hidden"
-            >
-                <div v-if="loading" class="absolute inset-0 bg-white/20 animate-pulse-slow"></div>
-                <svg v-if="!loading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <svg v-else class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span class="relative z-10">{{ loading ? 'Gerando Assinatura...' : 'Gerar Assinatura' }}</span>
-            </button>
-          </div>
-        </form>
-
-        <!-- Use a hidden div for HTML results if we ever want to bring them back without breaking logic -->
-        <div v-if="false">
-          <!-- Hidden HTML logic -->
-          <!-- Success Message HTML -->
-          <div v-if="successUrl" class="mt-6 space-y-4 animate-fade-in">
-            
-            <!-- Success Message -->
-            <div class="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 rounded-xl flex items-start gap-3">
-              <div class="flex-shrink-0 mt-0.5">
-                <svg class="h-5 w-5 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="text-sm font-semibold text-green-800 dark:text-green-400">Assinatura HTML gerada!</h3>
-                <a :href="successUrl" target="_blank" class="mt-1 block text-sm text-green-700 dark:text-green-300 underline hover:text-green-600 dark:hover:text-green-200">
-                  Visualizar e Baixar Arquivo
-                </a>
-              </div>
-            </div>
-
-            <!-- Permanent Link Section -->
-            <div v-if="permanentLink" class="p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl space-y-3">
-              
-              <!-- Copy HTML Button -->
-              <button 
-                  @click="copyHtml"
-                  class="w-full py-2 px-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium rounded-lg shadow hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-              >
-                  <svg v-if="!copiedHtml" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {{ copiedHtml ? 'Código HTML Copiado!' : 'Copiar Código HTML' }}
-              </button>
-
-              <div>
-                  <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Link Permanente (Dados na URL)</label>
-                  <div class="flex items-center gap-2">
-                      <input 
-                      readonly 
-                      :value="permanentLink" 
-                      class="flex-1 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 text-xs p-2 rounded border border-gray-300 dark:border-gray-700 focus:outline-none"
-                      @click="($event.target as HTMLInputElement).select()"
-                      />
-                      <button 
-                      @click="copyLink"
-                      class="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
-                      title="Copiar Link"
-                      >
-                      <svg v-if="!copied" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      </button>
-                  </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Success Message GIF -->
-        <div v-if="gifUrl" class="mt-6 p-6 bg-white dark:bg-gray-800 border border-indigo-100 dark:border-indigo-900 rounded-2xl shadow-xl flex flex-col items-center gap-4 animate-fade-in ring-1 ring-indigo-50 dark:ring-indigo-900/50">
-          
-          <div class="w-full flex justify-between items-center pb-4 border-b border-gray-100 dark:border-gray-800">
-             <div class="flex items-center gap-2">
-                <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                    <svg class="h-5 w-5 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div>
-                     <h3 class="text-base font-bold text-gray-900 dark:text-white">Assinatura Pronta!</h3>
-                     <p class="text-xs text-gray-500">Alta resolução</p>
-                </div>
-             </div>
-             
-              <a :href="gifUrl" download class="py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Baixar
-              </a>
-          </div>
-          
-          <div class="w-full bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 flex justify-center border border-gray-100 dark:border-gray-800">
-             <img :src="gifUrl" class="max-w-full rounded shadow-sm" alt="Generated GIF Signature" />
-          </div>
-        </div>
-
-        <!-- Error Message -->
-        <div v-if="error" class="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 rounded-xl flex items-start gap-3 animate-fade-in">
-           <div class="flex-shrink-0 mt-0.5">
-            <svg class="h-5 w-5 text-red-600 dark:text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-            </svg>
-          </div>
-           <div>
-            <h3 class="text-sm font-semibold text-red-800 dark:text-red-400">Erro ao gerar assinatura</h3>
-            <p class="mt-1 text-sm text-red-700 dark:text-red-300">{{ error }}</p>
-          </div>
-        </div>
-        
-        <!-- Footer -->
-        <div class="mt-8 text-center">
-            <p class="text-xs text-gray-500 dark:text-gray-600">
-                © 2024 NTL Technologies. Todos os direitos reservados.
+  <div class="min-h-screen bg-[radial-gradient(circle_at_top_left,_#f7efe4,_#eef2f7_45%,_#f8fafc)] px-4 py-8 text-slate-900">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-6">
+      <section class="overflow-hidden rounded-[32px] border border-white/70 bg-white/90 shadow-[0_28px_80px_rgba(15,23,42,0.08)] backdrop-blur">
+        <div class="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="border-b border-slate-200/80 p-8 lg:border-b-0 lg:border-r">
+            <p class="mb-3 inline-flex items-center rounded-full bg-[#f4ede1] px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[#996c2f]">
+              Assinatura universal
             </p>
+            <h1 class="text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
+              Gerador hibrido da assinatura NTL
+            </h1>
+            <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+              Os dados ficam em texto real para copiar e colar. A arte da direita sai em GIF publico com fallback no primeiro frame para Roundcube, Gmail, Outlook e Apple Mail.
+            </p>
+
+            <form class="mt-8 space-y-5" @submit.prevent="generateSignature">
+              <div class="space-y-2">
+                <label for="name" class="block text-sm font-medium text-slate-700">Nome completo</label>
+                <input
+                  id="name"
+                  v-model="form.name"
+                  type="text"
+                  required
+                  placeholder="Ex: Joao Silva"
+                  class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <label for="role" class="block text-sm font-medium text-slate-700">Cargo</label>
+                <input
+                  id="role"
+                  v-model="form.role"
+                  type="text"
+                  required
+                  placeholder="Ex: Analista Comercial"
+                  class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <label for="email" class="block text-sm font-medium text-slate-700">E-mail</label>
+                <input
+                  id="email"
+                  v-model="form.email"
+                  type="email"
+                  required
+                  placeholder="nome@ntl.com.br"
+                  class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                />
+              </div>
+
+              <div class="grid gap-5 md:grid-cols-2">
+                <div class="space-y-2">
+                  <label for="phone1" class="block text-sm font-medium text-slate-700">Telefone 1</label>
+                  <input
+                    id="phone1"
+                    v-model="form.phone1"
+                    type="tel"
+                    placeholder="(11) 99999-9999"
+                    class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                  />
+                </div>
+
+                <div class="space-y-2">
+                  <label for="phone2" class="block text-sm font-medium text-slate-700">Telefone 2</label>
+                  <input
+                    id="phone2"
+                    v-model="form.phone2"
+                    type="tel"
+                    placeholder="(11) 3333-4444"
+                    class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
+                  />
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-3 pt-2 sm:flex-row">
+                <button
+                  type="submit"
+                  :disabled="loading"
+                  class="inline-flex flex-1 items-center justify-center rounded-2xl bg-slate-950 px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {{ loading ? 'Preparando HTML...' : 'Gerar HTML compativel' }}
+                </button>
+
+                <button
+                  type="button"
+                  :disabled="loading"
+                  class="inline-flex flex-1 items-center justify-center rounded-2xl border border-slate-300 bg-white px-5 py-4 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  @click="copyHtml"
+                >
+                  {{ copiedHtml ? 'HTML copiado' : 'Copiar HTML' }}
+                </button>
+              </div>
+            </form>
+
+            <div class="mt-5 flex flex-wrap items-center gap-3 text-xs">
+              <span
+                class="inline-flex items-center rounded-full px-3 py-1 font-medium"
+                :class="isOutdated ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'"
+              >
+                {{ isOutdated ? 'Atualize o HTML antes de copiar' : 'HTML sincronizado com o formulario' }}
+              </span>
+              <span class="text-slate-500">A arte animada usa URL publica do projeto quando a assinatura estiver publicada.</span>
+            </div>
+
+            <div v-if="error" class="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {{ error }}
+            </div>
+          </div>
+
+          <div class="bg-[linear-gradient(180deg,_#fffdf8,_#f8fafc)] p-8">
+            <div class="rounded-[28px] border border-[#ece7dd] bg-white p-6 shadow-[0_18px_50px_rgba(148,163,184,0.14)]">
+              <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Uso no Roundcube</p>
+              <ol class="mt-4 space-y-3 text-sm leading-6 text-slate-600">
+                <li>1. Em <strong>Settings &gt; Identities</strong>, abra a identidade e marque <strong>HTML signature</strong>.</li>
+                <li>2. Em <strong>Preferences &gt; Composing Messages</strong>, deixe a composicao em HTML ativada.</li>
+                <li>3. Clique em <strong>Copiar HTML</strong> aqui e cole no campo de assinatura.</li>
+                <li>4. Se o cliente bloquear imagens remotas, o texto continua legivel e o primeiro quadro do GIF segue valido.</li>
+                <li>5. No editor do Roundcube podem aparecer guias tracejadas durante a edicao; no envio a assinatura usa o card arredondado do HTML.</li>
+              </ol>
+            </div>
+
+            <div class="mt-5 rounded-[28px] border border-[#e7edf3] bg-slate-950 p-6 text-slate-100 shadow-[0_18px_50px_rgba(15,23,42,0.18)]">
+              <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-300">Compatibilidade alvo</p>
+              <p class="mt-3 text-sm leading-6 text-slate-300">
+                Roundcube, Gmail web, Outlook desktop/web e Apple Mail. O HTML gerado usa tabela e estilos inline, sem dependencia de JavaScript.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="overflow-hidden rounded-[32px] border border-slate-200/80 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+        <div class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-950">Previa hibrida</h2>
+            <p class="text-sm text-slate-500">Um unico card envolve tudo: texto selecionavel a esquerda e GIF a direita.</p>
+          </div>
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+            Se o GIF nao animar no cliente, o primeiro quadro permanece valido.
+          </span>
         </div>
 
-      </div>
-
+        <div class="overflow-x-auto bg-[#f7f8fa] p-6">
+          <div class="inline-grid grid-cols-[348px_1px_182px] overflow-hidden rounded-[28px] border border-[#dfe4ea] bg-white shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
+            <div class="select-text bg-white px-7 py-5">
+              <div class="text-[26px] font-bold leading-[1.08] text-slate-950">
+                {{ previewSignature.name }}
+              </div>
+              <div class="mt-2 text-[15px] leading-6 text-slate-500">
+                {{ previewSignature.role }}
+              </div>
+              <div class="mt-4 space-y-1 text-[14px] leading-[22px] text-slate-800">
+                <div v-if="previewSignature.phone1">{{ previewSignature.phone1 }}</div>
+                <div v-if="previewSignature.phone2">{{ previewSignature.phone2 }}</div>
+                <div class="text-[#0f4c81]">{{ previewSignature.email }}</div>
+              </div>
+            </div>
+            <div class="bg-[#e7ebf0]"></div>
+            <div class="flex items-center justify-center bg-white px-1 py-3">
+              <img
+                :src="brandGifUrl"
+                alt="NTL Nova Tecnologia"
+                class="mx-auto block w-[170px] max-w-[170px]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 
-const form = ref({
+interface SignatureForm {
+  name: string
+  role: string
+  email: string
+  phone1: string
+  phone2: string
+}
+
+interface SignatureResponse {
+  success: boolean
+  html: string
+  filename: string
+  brandGifUrl?: string
+}
+
+const form = ref<SignatureForm>({
   name: '',
   role: '',
   email: '',
-  phone: ''
+  phone1: '',
+  phone2: ''
 })
 
 const loading = ref(false)
-const successUrl = ref('')
 const generatedHtml = ref('')
-const permanentLink = ref('')
-const gifUrl = ref('')
 const error = ref('')
-const isDark = ref(false) // Always light
-const copied = ref(false)
 const copiedHtml = ref(false)
+const brandGifUrl = ref('/ntl.gif?v=20260309173500')
+const lastGeneratedSnapshot = ref('')
 
-const copyLink = () => {
-  navigator.clipboard.writeText(permanentLink.value)
-  copied.value = true
-  setTimeout(() => copied.value = false, 2000)
-}
-
-onMounted(() => {
-    // Force light mode
-    isDark.value = false;
+const normalizeForm = (value: SignatureForm) => ({
+  name: value.name.trim(),
+  role: value.role.trim(),
+  email: value.email.trim(),
+  phone1: value.phone1.trim(),
+  phone2: value.phone2.trim()
 })
 
+const serializePayload = (value: ReturnType<typeof normalizeForm>) => JSON.stringify(value)
+
+const currentPayload = computed(() => normalizeForm(form.value))
+
+const previewSignature = computed(() => ({
+  name: currentPayload.value.name || 'Joao Silva',
+  role: currentPayload.value.role || 'Analista',
+  email: currentPayload.value.email || 'joao@ntl.com.br',
+  phone1: currentPayload.value.phone1,
+  phone2: currentPayload.value.phone2
+}))
+
+const isOutdated = computed(
+  () => !generatedHtml.value || lastGeneratedSnapshot.value !== serializePayload(currentPayload.value)
+)
+
+const writeClipboard = async (value: string) => {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value)
+    return
+  }
+
+  const textarea = document.createElement('textarea')
+  textarea.value = value
+  textarea.setAttribute('readonly', 'true')
+  textarea.style.position = 'absolute'
+  textarea.style.left = '-9999px'
+  document.body.appendChild(textarea)
+  textarea.select()
+  document.execCommand('copy')
+  document.body.removeChild(textarea)
+}
+
+const loadSignatureHtml = async () => {
+  const payload = currentPayload.value
+  const minLoadTime = new Promise((resolve) => setTimeout(resolve, 300))
+  const request = $fetch<SignatureResponse>('/api/generate', {
+    method: 'POST',
+    body: payload
+  })
+
+  const [, response] = await Promise.all([minLoadTime, request])
+
+  if (!response?.success || !response.html) {
+    throw new Error('Nao foi possivel gerar o HTML da assinatura.')
+  }
+
+  generatedHtml.value = response.html
+  brandGifUrl.value = response.brandGifUrl || '/ntl.gif?v=20260309173500'
+  lastGeneratedSnapshot.value = serializePayload(payload)
+}
+
 const generateSignature = async () => {
-  // Clear previous results
-  successUrl.value = ''
-  permanentLink.value = ''
   error.value = ''
-  generatedHtml.value = ''
-  gifUrl.value = ''
-  
+  copiedHtml.value = false
   loading.value = true
 
-  // Artificial delay
-  const minLoadTime = new Promise(resolve => setTimeout(resolve, 800))
-  
   try {
-    // Generate GIF directly
-    const request = $fetch('/api/generate-gif', {
-      method: 'POST',
-      body: { ...form.value, theme: 'light' }
-    })
-
-    const [_, data] = await Promise.all([minLoadTime, request])
-
-    if (data && data.success) {
-      gifUrl.value = data.dataUri
-      // We don't set SuccessURL or PermanentLink as user requested to hide them
-    } else {
-        error.value = 'Houve um erro desconhecido.'
-    }
-  } catch (e: any) {
-    error.value = e.message || 'Erro ao comunicar com o servidor.'
+    await loadSignatureHtml()
+  } catch (caughtError) {
+    error.value = caughtError instanceof Error ? caughtError.message : 'Erro ao comunicar com o servidor.'
   } finally {
     loading.value = false
   }
 }
 
-const copyHtml = () => {
-  navigator.clipboard.writeText(generatedHtml.value)
-  copiedHtml.value = true
-  setTimeout(() => copiedHtml.value = false, 2000)
+const copyHtml = async () => {
+  error.value = ''
+  loading.value = true
+
+  try {
+    if (isOutdated.value) {
+      await loadSignatureHtml()
+    }
+
+    await writeClipboard(generatedHtml.value)
+    copiedHtml.value = true
+    setTimeout(() => {
+      copiedHtml.value = false
+    }, 2000)
+  } catch (caughtError) {
+    error.value = caughtError instanceof Error ? caughtError.message : 'Nao foi possivel copiar o HTML.'
+  } finally {
+    loading.value = false
+  }
 }
-
-
 </script>
 
-<style>
-/* Smooth transition for theme toggle */
-</style>
+
+
+
+
+
+
+
+
