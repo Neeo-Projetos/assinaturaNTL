@@ -14,7 +14,7 @@
               Os dados ficam em texto real para copiar e colar. A arte da direita sai em GIF publico com fallback no primeiro frame para Roundcube, Gmail, Outlook e Apple Mail.
             </p>
 
-            <form class="mt-8 space-y-5" @submit.prevent="generateSignature">
+            <form class="mt-8 space-y-5 " @submit.prevent="generateSignature">
               <div class="space-y-2">
                 <label for="name" class="block text-sm font-medium text-slate-700">Nome completo</label>
                 <input
