@@ -28,12 +28,11 @@
               </div>
 
               <div class="space-y-2">
-                <label for="role" class="block text-sm font-medium text-slate-700">Cargo</label>
+                <label for="role" class="block text-sm font-medium text-slate-700">Cargo (Opcional)</label>
                 <input
                   id="role"
                   v-model="form.role"
                   type="text"
-                  required
                   placeholder="Ex: Analista Comercial"
                   class="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[#996c2f] focus:bg-white focus:ring-4 focus:ring-[#f4ede1]"
                 />
@@ -182,7 +181,7 @@
               <div class="text-[26px] font-bold leading-[1.08] text-slate-950">
                 {{ previewSignature.name }}
               </div>
-              <div class="mt-2 text-[15px] leading-6 text-slate-500">
+              <div v-if="previewSignature.role" class="mt-2 text-[15px] leading-6 text-slate-500">
                 {{ previewSignature.role }}
               </div>
               <div v-if="previewSignature.department" class="text-[14px] leading-6 text-slate-400">
@@ -267,7 +266,7 @@ const currentPayload = computed(() => normalizeForm(form.value))
 
 const previewSignature = computed(() => ({
   name: currentPayload.value.name || 'Joao Silva',
-  role: currentPayload.value.role || 'Analista',
+  role: currentPayload.value.role,
   department: currentPayload.value.department,
   email: currentPayload.value.email || 'joao@ntl.com.br',
   phone1: currentPayload.value.phone1,

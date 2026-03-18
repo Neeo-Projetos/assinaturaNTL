@@ -1,4 +1,4 @@
-﻿import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, createError } from 'h3'
 import {
   buildSignatureFilename,
   getAbsoluteBrandGifUrl,
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   if (!signatureHasRequiredFields(signature)) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Name, Role, and Email are required'
+      statusMessage: 'Name and Email are required'
     })
   }
 

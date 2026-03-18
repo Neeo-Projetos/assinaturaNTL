@@ -86,6 +86,14 @@ const renderRoleBlock = (role: string, department: string) => {
   const safeRole = escapeHtml(role)
   const safeDepartment = escapeHtml(department)
 
+  if (!safeRole && !safeDepartment) {
+    return ''
+  }
+
+  if (!safeRole) {
+    return `<div style="margin:0 0 14px 0;font-size:14px;line-height:1.5;color:#8a93a1;">${safeDepartment}</div>`
+  }
+
   if (!safeDepartment) {
     return `<div style="margin:0 0 14px 0;font-size:15px;line-height:1.5;color:#667085;">${safeRole}</div>`
   }
@@ -122,7 +130,7 @@ export function normalizeSignaturePayload(payload: SignaturePayload): Normalized
 }
 
 export function signatureHasRequiredFields(signature: NormalizedSignature) {
-  return Boolean(signature.name && signature.role && signature.email)
+  return Boolean(signature.name && signature.email)
 }
 
 export async function loadSignatureTemplate() {
